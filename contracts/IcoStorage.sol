@@ -10,65 +10,61 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 contract IcoStorage is Ownable {
 
     struct Project {
-        bool isValue; // Now ve know this is an initialized struct
-        bool active;    // if true, this contract can be shown
-        address icoContractAddress; // ICO smart contract address
-        address tokenAddress; // Token's smart contract address
+        bool isValue; // We now can know this is an initialized struct
         string name; // ICO company name
+        address tokenAddress; // Token's smart contract address
+        bool active;    // if true, this contract can be shown
     }
 
-    mapping(uint256 => Project) public projects;
-    uint256[] public projectsAccts;
+    mapping(address => Project) public projects;
+    address[] public projectsAccts;
 
     function createProject(
-        uint256 _projectId,
         string _name,
         address _icoContractAddress,
         address _tokenAddress
     ) public onlyOwner returns (bool) {
-        Project storage project  = projects[_projectId];
+        Project storage project  = projects[_icoContractAddress]; // Create new project
 
-        project.isValue = true;
-        project.active = true;
-        project.icoContractAddress = _icoContractAddress;
-        project.tokenAddress = _tokenAddress;
+        project.isValue = true; // project is initilaized and not empty
         project.name = _name;
+        project.tokenAddress = _tokenAddress;
+        project.active = true;
 
-        projectsAccts.push(_projectId);
+        projectsAccts.push(_icoContractAddress);
 
         return true;
     }
 
-    function getProject(uint256 _projectId) public view returns (bool, string, address, address) {
-        require(projects[_projectId].isValue);
+    function getProject(address _icoContractAddress) public view returns (string, address, bool) {
+        require(projects[_icoContractAddress].isValue);
 
         return (
-            projects[_projectId].active,
-            projects[_projectId].name,
-            projects[_projectId].icoContractAddress,
-            projects[_projectId].tokenAddress
+            projects[_icoContractAddress].name,
+            projects[_icoContractAddress].tokenAddress,
+            projects[_icoContractAddress].active
         );
     }
 
-    function activateProject(uint256 _projectId) public onlyOwner returns (bool) {
-        Project storage project  = projects[_projectId];
-        require(project.isValue);
+    function activateProject(address _icoContractAddress) public onlyOwner returns (bool) {
+        Project storage project  = projects[_icoContractAddress];
+        require(project.isValue); // Check project exists
 
         project.active = true;
 
         return true;
     }
 
-    function deactivateProject(uint256 _projectId) public onlyOwner returns (bool) {
-        Project storage project  = projects[_projectId];
-        require(project.isValue);
+    function deactivateProject(address _icoContractAddress) public onlyOwner returns (bool) {
+        Project storage project  = projects[_icoContractAddress];
+        require(project.isValue); // Check project exists
 
         project.active = false;
 
         return false;
     }
 
-    function getProjects() public view returns (uint256[]) {
+    function getProjects() public view returns (address[]) {
         return projectsAccts;
     }
 

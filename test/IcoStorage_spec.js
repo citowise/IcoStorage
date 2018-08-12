@@ -8,7 +8,7 @@ contract("IcoStorage", accounts => {
     const icoStorage = await IcoStorage.new({ from: owner })
     const creator = await icoStorage.owner()
 
-    assert.equal(creator, owner, "10000 wasn't in the first account");
+    assert.equal(creator, owner, "10000 wasn't in the first account")
   })
 
   it("should create project", async function () {
@@ -16,14 +16,13 @@ contract("IcoStorage", accounts => {
     const icoStorage = await IcoStorage.new({ from: owner })
 
     const result = await icoStorage.createProject(
-      10,
       "test",
       "0x0123456789012345678901234567890123456789",
       "0x9876543210987654321098765432109876543210",
       { from: owner }
     )
 
-    assert.equal(result.receipt.status, true);
+    assert.equal(result.receipt.status, true)
   });
 
   it("should return existing projects", async function () {
@@ -31,19 +30,17 @@ contract("IcoStorage", accounts => {
     const icoStorage = await IcoStorage.new({ from: owner })
 
     await icoStorage.createProject.sendTransaction(
-      10,
       "test",
       "0x0123456789012345678901234567890123456789",
       "0x9876543210987654321098765432109876543210",
       { from: owner }
     )
 
-    let result = await icoStorage.getProject.call(10)
+    let project = await icoStorage.getProject.call("0x0123456789012345678901234567890123456789")
 
-    assert.strictEqual(result[0], true)
-    assert.strictEqual(result[1], "test");
-    assert.strictEqual(result[2], "0x0123456789012345678901234567890123456789");
-    assert.strictEqual(result[3], "0x9876543210987654321098765432109876543210");
+    assert.strictEqual(project[0], "test")
+    assert.strictEqual(project[1], "0x9876543210987654321098765432109876543210")
+    assert.strictEqual(project[2], true)
   });
 
   it("should count existing projects", async function () {
@@ -51,7 +48,6 @@ contract("IcoStorage", accounts => {
     const icoStorage = await IcoStorage.new({ from: owner })
 
     await icoStorage.createProject.sendTransaction(
-      10,
       "test",
       "0x0123456789012345678901234567890123456789",
       "0x9876543210987654321098765432109876543210",
@@ -68,7 +64,6 @@ contract("IcoStorage", accounts => {
     const icoStorage = await IcoStorage.new({ from: owner })
 
     await icoStorage.createProject.sendTransaction(
-      10,
       "test",
       "0x0123456789012345678901234567890123456789",
       "0x9876543210987654321098765432109876543210",
@@ -77,7 +72,7 @@ contract("IcoStorage", accounts => {
 
     let result = await icoStorage.getProjects.call()
 
-    assert.deepEqual(result[0]["c"], [10])
+    assert.deepEqual(result, ["0x0123456789012345678901234567890123456789"])
   });
 
   it("should deactivate project", async function () {
@@ -85,18 +80,23 @@ contract("IcoStorage", accounts => {
     const icoStorage = await IcoStorage.new({ from: owner })
 
     await icoStorage.createProject.sendTransaction(
-      10,
       "test",
       "0x0123456789012345678901234567890123456789",
       "0x9876543210987654321098765432109876543210",
       { from: owner }
     )
 
-    let result = await icoStorage.deactivateProject().sendTransaction(
-      10,
+    let result = await icoStorage.deactivateProject(
+      "0x0123456789012345678901234567890123456789",
       { from: owner }
     )
 
-    assert.deepEqual(result[0]["c"], [10])
+    assert.equal(result.receipt.status, true);
+
+    let project = await icoStorage.getProject.call("0x0123456789012345678901234567890123456789")
+
+    assert.strictEqual(project[0], "test")
+    assert.strictEqual(project[1], "0x9876543210987654321098765432109876543210")
+    assert.strictEqual(project[2], false)
   });
 })
