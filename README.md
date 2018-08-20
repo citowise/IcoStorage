@@ -2,7 +2,7 @@
 
 * Install Truffle.js
 
-    npm install -g truffle
+    npm install
 
 * Install Ganache and launch it
 
@@ -12,9 +12,14 @@
 
     truffle compile
 
-* And
+* Then
 
     truffle migrate
+
+* Finally run test
+
+    truffle test
+
 
 ## Tutorials and accompined materials
 

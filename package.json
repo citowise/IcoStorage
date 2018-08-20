@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "truffle": "4.1.13",
     "openzeppelin-solidity": "1.12.0"
   }
 }
